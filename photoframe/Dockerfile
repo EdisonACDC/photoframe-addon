@@ -25,6 +25,9 @@ COPY tsconfig.json ./
 COPY tailwind.config.ts ./
 COPY postcss.config.js ./
 
+# Fix import.meta.dirname usando path assoluti /app
+RUN sed -i 's/import\.meta\.dirname/"\/app"/g' server/vite.ts
+
 # Fai il build
 RUN npm run build || (cat /root/.npm/_logs/*.log 2>/dev/null && exit 1)
 
