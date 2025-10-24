@@ -1,9 +1,9 @@
 {
   "name": "PhotoFrame - Cornice Digitale",
   "version": "1.0.0",
-  "slug": "photoframe",
+  "slug": "photoframe-v2",
   "description": "Trasforma il tuo tablet in una cornice digitale elegante con slideshow automatico",
-  "url": "https://github.com/tuousername/photoframe-addon",
+  "url": "https://github.com/EdisonACDC/photoframe-addon",
   "arch": ["aarch64", "amd64", "armhf", "armv7", "i386"],
   "startup": "application",
   "boot": "auto",
