@@ -1,30 +1,23 @@
 ARG BUILD_FROM
 FROM $BUILD_FROM
 
-# Installa Node.js e dipendenze
+# Installa Node.js 20 e dipendenze
 RUN apk add --no-cache \
-    nodejs \
+    nodejs-current \
     npm \
     bash
 
 # Crea directory di lavoro
 WORKDIR /app
 
-# Copia package.json e installa TUTTE le dipendenze (incluse dev per build)
-COPY package*.json ./
-RUN npm ci
+# Copia TUTTO il codice
+COPY . .
 
-# Copia il codice dell'applicazione
-COPY client ./client
-COPY server ./server
-COPY shared ./shared
-COPY vite.config.ts ./
-COPY tsconfig.json ./
-COPY tailwind.config.ts ./
-COPY postcss.config.js ./
+# Installa dipendenze (usa install invece di ci per essere più flessibile)
+RUN npm install --verbose
 
-# Fai il build del frontend e backend
-RUN npm run build
+# Fai il build
+RUN npm run build || (cat /root/.npm/_logs/*.log 2>/dev/null && exit 1)
 
 # Rimuovi devDependencies per ridurre dimensione
 RUN npm prune --production
@@ -32,8 +25,7 @@ RUN npm prune --production
 # Crea directory per upload
 RUN mkdir -p /data/uploads
 
-# Copia script di avvio
-COPY run.sh /
+# Rendi eseguibile lo script di avvio
 RUN chmod a+x /run.sh
 
 # Espone porta
