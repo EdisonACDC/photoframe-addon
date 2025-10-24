@@ -1,0 +1,7 @@
+configuration:
+  upload_limit:
+    name: Limite Upload
+    description: Numero massimo di foto caricabili
+  max_file_size:
+    name: Dimensione Massima File
+    description: Dimensione massima in MB per le foto caricate
