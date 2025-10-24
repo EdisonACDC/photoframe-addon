@@ -15,6 +15,7 @@ mkdir -p /data/uploads
 # Export variabili ambiente
 export UPLOAD_DIR=/data/uploads
 export PORT=5000
+export APP_ROOT=/app
 
 cd /app
 
