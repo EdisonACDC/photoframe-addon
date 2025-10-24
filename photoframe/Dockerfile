@@ -28,9 +28,6 @@ COPY postcss.config.js ./
 # Fai il build
 RUN npm run build || (cat /root/.npm/_logs/*.log 2>/dev/null && exit 1)
 
-# Rimuovi devDependencies
-RUN npm prune --production
-
 # Crea directory per upload
 RUN mkdir -p /data/uploads
 
