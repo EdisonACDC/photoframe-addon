@@ -1,6 +1,6 @@
 {
   "name": "PhotoFrame - Cornice Digitale",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "slug": "photoframe-v2",
   "description": "Trasforma il tuo tablet in una cornice digitale elegante con slideshow automatico",
   "url": "https://github.com/EdisonACDC/photoframe-addon",
@@ -19,10 +19,6 @@
   "ingress_port": 5000,
   "panel_icon": "mdi:image-multiple",
   "panel_title": "PhotoFrame",
-  "map": [
-    "config:rw",
-    "share:rw"
-  ],
   "options": {
     "upload_limit": 50,
     "max_file_size": 10
