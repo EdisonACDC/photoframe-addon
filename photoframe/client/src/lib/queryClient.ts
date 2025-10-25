@@ -1,5 +1,17 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
+// Convert absolute API paths to relative paths for Home Assistant Ingress compatibility
+function normalizeApiUrl(url: string): string {
+  // If it's already a relative URL or full URL, return as-is
+  if (!url.startsWith('/')) {
+    return url;
+  }
+  
+  // Remove leading slash and make it relative
+  // This ensures it works with Home Assistant Ingress paths like /api/hassio_ingress/<token>/
+  return '.' + url;
+}
+
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
     const text = (await res.text()) || res.statusText;
@@ -24,7 +36,9 @@ export async function apiRequest(
     ? { "Content-Type": "application/json", ...headers }
     : headers;
 
-  const res = await fetch(url, {
+  const normalizedUrl = normalizeApiUrl(url);
+
+  const res = await fetch(normalizedUrl, {
     method,
     headers: fetchHeaders,
     body: isFormData ? body : body ? JSON.stringify(body) : undefined,
@@ -41,7 +55,10 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    const res = await fetch(queryKey.join("/") as string, {
+    const url = queryKey.join("/") as string;
+    const normalizedUrl = normalizeApiUrl(url);
+    
+    const res = await fetch(normalizedUrl, {
       credentials: "include",
     });
 
