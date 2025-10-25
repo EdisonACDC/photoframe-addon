@@ -36,11 +36,11 @@ export default function PhotoGrid({ photos, onDelete, onPhotoClick }: PhotoGridP
             className="w-full h-full object-cover"
             onClick={() => onPhotoClick?.(index)}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
           <Button
             size="icon"
             variant="destructive"
-            className="absolute top-2 right-2 w-9 h-9 shadow-lg"
+            className="absolute top-2 right-2 w-9 h-9 shadow-lg z-10"
             onClick={(e) => {
               e.stopPropagation();
               onDelete(photo.id);
