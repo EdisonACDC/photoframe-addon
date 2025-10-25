@@ -62,26 +62,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/photos/upload", upload.array("photos", 50), async (req, res) => {
     try {
+      console.log("[UPLOAD] Inizio upload, UPLOAD_DIR:", UPLOAD_DIR);
+      
       const files = req.files as Express.Multer.File[];
+      console.log("[UPLOAD] File ricevuti:", files?.length || 0);
       
       if (!files || files.length === 0) {
+        console.error("[UPLOAD] Nessun file ricevuto");
         return res.status(400).json({ error: "No files uploaded" });
       }
 
+      console.log("[UPLOAD] Elaborazione file...");
       const uploadedPhotos = await Promise.all(
         files.map(async (file) => {
+          console.log("[UPLOAD] File:", file.originalname, "→", file.filename);
           const photoData = insertPhotoSchema.parse({
             filename: file.originalname,
             filepath: `/uploads/${file.filename}`,
           });
-          return await storage.createPhoto(photoData);
+          const photo = await storage.createPhoto(photoData);
+          console.log("[UPLOAD] Foto salvata:", photo.id);
+          return photo;
         })
       );
 
+      console.log("[UPLOAD] Upload completato:", uploadedPhotos.length, "foto");
       res.json(uploadedPhotos);
     } catch (error) {
-      console.error("Error uploading photos:", error);
-      res.status(500).json({ error: "Failed to upload photos" });
+      console.error("[UPLOAD] ERRORE:", error);
+      console.error("[UPLOAD] Stack:", error instanceof Error ? error.stack : "N/A");
+      res.status(500).json({ 
+        error: "Failed to upload photos",
+        details: error instanceof Error ? error.message : String(error)
+      });
     }
   });
 
