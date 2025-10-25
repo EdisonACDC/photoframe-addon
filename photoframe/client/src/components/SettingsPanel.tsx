@@ -17,11 +17,17 @@ interface SettingsPanelProps {
 const effects: { value: TransitionEffect; label: string }[] = [
   { value: "mix", label: "🎲 Mix Casuale" },
   { value: "fade", label: "Dissolvenza" },
-  { value: "slideLeft", label: "Scorri Sinistra" },
-  { value: "slideRight", label: "Scorri Destra" },
-  { value: "zoomIn", label: "Zoom Avanti" },
-  { value: "zoomOut", label: "Zoom Indietro" },
-  { value: "kenBurns", label: "Ken Burns" },
+  { value: "slideLeft", label: "◀️ Scorri Sinistra" },
+  { value: "slideRight", label: "▶️ Scorri Destra" },
+  { value: "slideUp", label: "⬆️ Scorri Alto" },
+  { value: "slideDown", label: "⬇️ Scorri Basso" },
+  { value: "zoomIn", label: "🔍 Zoom Avanti" },
+  { value: "zoomOut", label: "🔎 Zoom Indietro" },
+  { value: "kenBurns", label: "📽️ Ken Burns" },
+  { value: "rotate", label: "🔄 Rotazione" },
+  { value: "flip", label: "🔃 Flip 3D" },
+  { value: "spiral", label: "🌀 Spirale" },
+  { value: "corner", label: "📐 Angolo" },
 ];
 
 export default function SettingsPanel({
@@ -96,14 +102,14 @@ export default function SettingsPanel({
                   <Label className="text-sm font-medium mb-4 block">
                     Effetto Transizione
                   </Label>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-2 gap-2 max-h-96 overflow-y-auto">
                     {effects.map((item) => (
                       <Button
                         key={item.value}
                         variant={effect === item.value ? "default" : "outline"}
                         size="sm"
                         onClick={() => onEffectChange(item.value)}
-                        className="justify-start"
+                        className="justify-start text-xs"
                         data-testid={`button-effect-${item.value}`}
                       >
                         {item.label}
