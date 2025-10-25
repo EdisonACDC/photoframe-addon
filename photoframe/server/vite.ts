@@ -1,15 +1,13 @@
 import express, { type Express } from "express";
 import fs from "fs";
 import path from "path";
-import { fileURLToPath } from "url";
 import { createServer as createViteServer, createLogger } from "vite";
 import { type Server } from "http";
 import viteConfig from "../vite.config";
 import { nanoid } from "nanoid";
 
-// Polyfill for __dirname in ESM
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Use APP_ROOT env var in production, fallback to /app for Home Assistant
+const APP_ROOT = process.env.APP_ROOT || "/app";
 
 const viteLogger = createLogger();
 
@@ -51,8 +49,7 @@ export async function setupVite(app: Express, server: Server) {
 
     try {
       const clientTemplate = path.resolve(
-        __dirname,
-        "..",
+        APP_ROOT,
         "client",
         "index.html",
       );
@@ -73,7 +70,7 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  const distPath = path.resolve(__dirname, "public");
+  const distPath = path.resolve(APP_ROOT, "public");
 
   if (!fs.existsSync(distPath)) {
     throw new Error(
