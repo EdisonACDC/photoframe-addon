@@ -125,6 +125,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch("/api/photos/:id/trash", async (req, res) => {
+    try {
+      const photo = await storage.moveToTrash(req.params.id);
+      if (!photo) {
+        return res.status(404).json({ error: "Photo not found" });
+      }
+      res.json(photo);
+    } catch (error) {
+      console.error("Error moving photo to trash:", error);
+      res.status(500).json({ error: "Failed to move photo to trash" });
+    }
+  });
+
+  app.patch("/api/photos/:id/restore", async (req, res) => {
+    try {
+      const photo = await storage.restoreFromTrash(req.params.id);
+      if (!photo) {
+        return res.status(404).json({ error: "Photo not found" });
+      }
+      res.json(photo);
+    } catch (error) {
+      console.error("Error restoring photo:", error);
+      res.status(500).json({ error: "Failed to restore photo" });
+    }
+  });
+
+  app.post("/api/photos/empty-trash", async (req, res) => {
+    try {
+      const deletedCount = await storage.emptyTrash();
+      res.json({ success: true, deletedCount });
+    } catch (error) {
+      console.error("Error emptying trash:", error);
+      res.status(500).json({ error: "Failed to empty trash" });
+    }
+  });
+
   app.get("/api/slideshow/status", (req, res) => {
     res.json({ 
       playing: true,
