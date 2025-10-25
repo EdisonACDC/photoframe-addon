@@ -25,11 +25,11 @@ COPY tsconfig.json ./
 COPY tailwind.config.ts ./
 COPY postcss.config.js ./
 
-# Fix import.meta.dirname usando process.env.APP_ROOT
-RUN sed -i 's/import\.meta\.dirname/process.env.APP_ROOT ?? process.cwd()/g' server/vite.ts
-
 # Fai il build
 RUN npm run build || (cat /root/.npm/_logs/*.log 2>/dev/null && exit 1)
+
+# Fix import_meta.dirname nel file compilato dist/index.js
+RUN node -e "const fs=require('fs');const file='dist/index.js';const content=fs.readFileSync(file,'utf8');fs.writeFileSync(file,content.replace(/import_meta\.dirname/g,'(process.env.APP_ROOT ?? process.cwd())'));"
 
 # Crea directory per upload
 RUN mkdir -p /data/uploads
