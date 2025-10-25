@@ -8,6 +8,9 @@ export interface IStorage {
   getPhoto(id: string): Promise<Photo | undefined>;
   createPhoto(photo: InsertPhoto): Promise<Photo>;
   deletePhoto(id: string): Promise<boolean>;
+  moveToTrash(id: string): Promise<Photo | undefined>;
+  restoreFromTrash(id: string): Promise<Photo | undefined>;
+  emptyTrash(): Promise<number>;
 }
 
 export class FileStorage implements IStorage {
@@ -47,8 +50,40 @@ export class FileStorage implements IStorage {
 
       // Scan uploads directory and sync with database
       await this.scanAndSync();
+
+      // Clean up trashed photos on startup
+      await this.cleanupTrashedPhotos();
     } catch (error) {
       console.error("[FileStorage] Errore inizializzazione:", error);
+    }
+  }
+
+  private async cleanupTrashedPhotos() {
+    try {
+      const trashedPhotos = Array.from(this.photos.values()).filter(p => p.inTrash);
+      
+      if (trashedPhotos.length === 0) {
+        console.log("[FileStorage] Nessuna foto nel cestino da eliminare");
+        return;
+      }
+
+      console.log(`[FileStorage] Eliminazione ${trashedPhotos.length} foto dal cestino...`);
+      
+      for (const photo of trashedPhotos) {
+        try {
+          const fullPath = path.join(this.uploadsDir, path.basename(photo.filepath));
+          await fs.unlink(fullPath);
+          this.photos.delete(photo.id);
+          console.log(`[FileStorage] Eliminata: ${photo.filename}`);
+        } catch (err) {
+          console.error(`[FileStorage] Errore eliminazione ${photo.filename}:`, err);
+        }
+      }
+      
+      await this.save();
+      console.log("[FileStorage] Pulizia cestino completata");
+    } catch (error) {
+      console.error("[FileStorage] Errore pulizia cestino:", error);
     }
   }
 
@@ -77,6 +112,7 @@ export class FileStorage implements IStorage {
             filename: filename,
             filepath: `/uploads/${filename}`,
             uploadedAt: stats.birthtime || new Date(),
+            inTrash: false,
           };
           this.photos.set(photo.id, photo);
           console.log(`[FileStorage] Recuperata: ${filename}`);
@@ -132,6 +168,7 @@ export class FileStorage implements IStorage {
       ...insertPhoto,
       id,
       uploadedAt: new Date(),
+      inTrash: false,
     };
     this.photos.set(id, photo);
     await this.save();
@@ -144,6 +181,54 @@ export class FileStorage implements IStorage {
       await this.save();
     }
     return result;
+  }
+
+  async moveToTrash(id: string): Promise<Photo | undefined> {
+    const photo = this.photos.get(id);
+    if (!photo) return undefined;
+    
+    photo.inTrash = true;
+    this.photos.set(id, photo);
+    await this.save();
+    
+    console.log(`[FileStorage] Foto spostata nel cestino: ${photo.filename}`);
+    return photo;
+  }
+
+  async restoreFromTrash(id: string): Promise<Photo | undefined> {
+    const photo = this.photos.get(id);
+    if (!photo) return undefined;
+    
+    photo.inTrash = false;
+    this.photos.set(id, photo);
+    await this.save();
+    
+    console.log(`[FileStorage] Foto ripristinata dal cestino: ${photo.filename}`);
+    return photo;
+  }
+
+  async emptyTrash(): Promise<number> {
+    const trashedPhotos = Array.from(this.photos.values()).filter(p => p.inTrash);
+    let deleted = 0;
+    
+    for (const photo of trashedPhotos) {
+      try {
+        const fullPath = path.join(this.uploadsDir, path.basename(photo.filepath));
+        await fs.unlink(fullPath);
+        this.photos.delete(photo.id);
+        deleted++;
+        console.log(`[FileStorage] Eliminata dal cestino: ${photo.filename}`);
+      } catch (err) {
+        console.error(`[FileStorage] Errore eliminazione ${photo.filename}:`, err);
+      }
+    }
+    
+    if (deleted > 0) {
+      await this.save();
+    }
+    
+    console.log(`[FileStorage] Cestino svuotato: ${deleted} foto eliminate`);
+    return deleted;
   }
 }
 
