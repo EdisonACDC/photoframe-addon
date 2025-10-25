@@ -7,7 +7,7 @@ interface Photo {
   filename: string;
 }
 
-export type TransitionEffect = "mix" | "fade" | "slideLeft" | "slideRight" | "zoomIn" | "zoomOut" | "kenBurns";
+export type TransitionEffect = "mix" | "fade" | "slideLeft" | "slideRight" | "slideUp" | "slideDown" | "zoomIn" | "zoomOut" | "kenBurns" | "rotate" | "flip" | "spiral" | "corner";
 
 interface PhotoViewerProps {
   photos: Photo[];
@@ -48,10 +48,40 @@ const transitionVariants = {
     animate: { opacity: 1, scale: 1.1 },
     exit: { opacity: 0, scale: 1.15 },
   },
+  slideUp: {
+    initial: { opacity: 0, y: "100%" },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: "-100%" },
+  },
+  slideDown: {
+    initial: { opacity: 0, y: "-100%" },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: "100%" },
+  },
+  rotate: {
+    initial: { opacity: 0, rotate: -180, scale: 0.5 },
+    animate: { opacity: 1, rotate: 0, scale: 1 },
+    exit: { opacity: 0, rotate: 180, scale: 0.5 },
+  },
+  flip: {
+    initial: { opacity: 0, rotateY: -90, scale: 0.8 },
+    animate: { opacity: 1, rotateY: 0, scale: 1 },
+    exit: { opacity: 0, rotateY: 90, scale: 0.8 },
+  },
+  spiral: {
+    initial: { opacity: 0, rotate: -360, scale: 0.3 },
+    animate: { opacity: 1, rotate: 0, scale: 1 },
+    exit: { opacity: 0, rotate: 360, scale: 0.3 },
+  },
+  corner: {
+    initial: { opacity: 0, x: "100%", y: "-100%", rotate: -45, scale: 0.5 },
+    animate: { opacity: 1, x: 0, y: 0, rotate: 0, scale: 1 },
+    exit: { opacity: 0, x: "-100%", y: "100%", rotate: 45, scale: 0.5 },
+  },
 };
 
 type ActualEffect = Exclude<TransitionEffect, "mix">;
-const effectOptions: ActualEffect[] = ["fade", "slideLeft", "slideRight", "zoomIn", "zoomOut", "kenBurns"];
+const effectOptions: ActualEffect[] = ["fade", "slideLeft", "slideRight", "slideUp", "slideDown", "zoomIn", "zoomOut", "kenBurns", "rotate", "flip", "spiral", "corner"];
 
 export default function PhotoViewer({
   photos,
