@@ -7,7 +7,7 @@ interface Photo {
   filename: string;
 }
 
-export type TransitionEffect = "fade" | "slideLeft" | "slideRight" | "zoomIn" | "zoomOut" | "kenBurns";
+export type TransitionEffect = "mix" | "fade" | "slideLeft" | "slideRight" | "zoomIn" | "zoomOut" | "kenBurns";
 
 interface PhotoViewerProps {
   photos: Photo[];
@@ -50,6 +50,8 @@ const transitionVariants = {
   },
 };
 
+const effectOptions: TransitionEffect[] = ["fade", "slideLeft", "slideRight", "zoomIn", "zoomOut", "kenBurns"];
+
 export default function PhotoViewer({
   photos,
   currentIndex,
@@ -58,10 +60,19 @@ export default function PhotoViewer({
   effect = "fade",
 }: PhotoViewerProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [currentEffect, setCurrentEffect] = useState<TransitionEffect>(effect);
 
   useEffect(() => {
     setImageLoaded(false);
-  }, [currentIndex]);
+    
+    // If Mix is selected, randomize effect for each photo
+    if (effect === "mix") {
+      const randomEffect = effectOptions[Math.floor(Math.random() * effectOptions.length)];
+      setCurrentEffect(randomEffect);
+    } else {
+      setCurrentEffect(effect);
+    }
+  }, [currentIndex, effect]);
 
   if (photos.length === 0) {
     return (
@@ -74,7 +85,7 @@ export default function PhotoViewer({
   }
 
   const currentPhoto = photos[currentIndex];
-  const variants = transitionVariants[effect];
+  const variants = transitionVariants[currentEffect];
 
   return (
     <div className="w-screen h-screen bg-background overflow-hidden relative">
