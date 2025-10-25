@@ -103,9 +103,10 @@ function PhotoFrameApp() {
     setIsSlideshow(false);
   }, []);
 
+  // Convert absolute image paths to relative for Home Assistant Ingress compatibility
   const photosWithUrls = photos.map((photo) => ({
     ...photo,
-    url: photo.filepath,
+    url: photo.filepath.startsWith('/') ? '.' + photo.filepath : photo.filepath,
   }));
 
   return (
