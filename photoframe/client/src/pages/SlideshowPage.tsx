@@ -20,7 +20,7 @@ export default function SlideshowPage({ photos, onExit }: SlideshowPageProps) {
   const [showControls, setShowControls] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
   const [intervalSeconds, setIntervalSeconds] = useState(15);
-  const [effect, setEffect] = useState<TransitionEffect>("fade");
+  const [effect, setEffect] = useState<TransitionEffect>("mix");
   const idleTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
