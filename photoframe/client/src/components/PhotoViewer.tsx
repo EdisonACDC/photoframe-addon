@@ -50,7 +50,8 @@ const transitionVariants = {
   },
 };
 
-const effectOptions: TransitionEffect[] = ["fade", "slideLeft", "slideRight", "zoomIn", "zoomOut", "kenBurns"];
+type ActualEffect = Exclude<TransitionEffect, "mix">;
+const effectOptions: ActualEffect[] = ["fade", "slideLeft", "slideRight", "zoomIn", "zoomOut", "kenBurns"];
 
 export default function PhotoViewer({
   photos,
@@ -60,7 +61,7 @@ export default function PhotoViewer({
   effect = "fade",
 }: PhotoViewerProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [currentEffect, setCurrentEffect] = useState<TransitionEffect>(effect);
+  const [currentEffect, setCurrentEffect] = useState<ActualEffect>("fade");
 
   useEffect(() => {
     setImageLoaded(false);
