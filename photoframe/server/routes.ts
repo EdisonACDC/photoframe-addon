@@ -6,9 +6,12 @@ import fs from "fs/promises";
 import { storage } from "./storage";
 import { insertPhotoSchema } from "@shared/schema";
 
+// Use UPLOAD_DIR from environment (set in run.sh to /data/uploads)
+const UPLOAD_DIR = process.env.UPLOAD_DIR || "uploads";
+
 const upload = multer({
   storage: multer.diskStorage({
-    destination: "uploads/",
+    destination: UPLOAD_DIR,
     filename: (req, file, cb) => {
       const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
       cb(null, uniqueSuffix + path.extname(file.originalname));
@@ -32,7 +35,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.setHeader("Cache-Control", "public, max-age=31536000");
     next();
   });
-  app.use("/uploads", (await import("express")).static("uploads"));
+  app.use("/uploads", (await import("express")).static(UPLOAD_DIR));
 
   app.get("/api/photos", async (req, res) => {
     try {
@@ -90,7 +93,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const filename = path.basename(photo.filepath);
-      const filepath = path.join(process.cwd(), "uploads", filename);
+      const filepath = path.join(UPLOAD_DIR, filename);
       try {
         await fs.unlink(filepath);
       } catch (error) {
