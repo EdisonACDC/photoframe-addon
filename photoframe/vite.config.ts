@@ -30,6 +30,7 @@ export default defineConfig({
     },
   },
   root: path.resolve(APP_ROOT, "client"),
+  base: "./",
   build: {
     outDir: path.resolve(APP_ROOT, "dist/public"),
     emptyOutDir: true,
