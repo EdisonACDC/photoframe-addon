@@ -15,6 +15,7 @@ interface SettingsPanelProps {
 }
 
 const effects: { value: TransitionEffect; label: string }[] = [
+  { value: "mix", label: "🎲 Mix Casuale" },
   { value: "fade", label: "Dissolvenza" },
   { value: "slideLeft", label: "Scorri Sinistra" },
   { value: "slideRight", label: "Scorri Destra" },
