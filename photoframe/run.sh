@@ -19,14 +19,28 @@ export APP_ROOT=/app
 
 cd /app
 
+# Crea directory uploads se non esiste
+bashio::log.info "Verifica directory uploads..."
+if [ ! -d "/data/uploads" ]; then
+  bashio::log.info "Creazione /data/uploads..."
+  mkdir -p /data/uploads
+  chmod 777 /data/uploads
+  bashio::log.info "/data/uploads creata con permessi 777"
+else
+  bashio::log.info "/data/uploads esiste già"
+  chmod 777 /data/uploads
+  bashio::log.info "Permessi aggiornati: 777"
+fi
+
 # Debug: verifica file esistenti
 bashio::log.info "=== DEBUG INFO ==="
 bashio::log.info "Contenuto /app:"
 ls -la /app | head -10
-bashio::log.info "Contenuto /app/dist:"
-ls -la /app/dist 2>/dev/null || bashio::log.warning "/app/dist NON ESISTE"
-bashio::log.info "Contenuto /app/dist/public:"
-ls -la /app/dist/public 2>/dev/null || bashio::log.warning "/app/dist/public NON ESISTE"
+bashio::log.info "Contenuto /data:"
+ls -la /data 2>/dev/null || bashio::log.warning "/data NON ESISTE"
+bashio::log.info "Permessi /data/uploads:"
+ls -la /data/uploads 2>/dev/null || bashio::log.warning "/data/uploads NON ESISTE"
+bashio::log.info "UPLOAD_DIR env: $UPLOAD_DIR"
 bashio::log.info "==================="
 
 # Avvia l'applicazione
