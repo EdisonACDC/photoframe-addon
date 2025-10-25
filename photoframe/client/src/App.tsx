@@ -12,6 +12,7 @@ interface Photo {
   filename: string;
   filepath: string;
   uploadedAt: Date;
+  inTrash: boolean;
 }
 
 function PhotoFrameApp() {
@@ -75,6 +76,75 @@ function PhotoFrameApp() {
     },
   });
 
+  const moveToTrashMutation = useMutation({
+    mutationFn: async (id: string) => {
+      return apiRequest(`/api/photos/${id}/trash`, {
+        method: "PATCH",
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/photos"] });
+      toast({
+        title: "Foto spostata nel cestino",
+        description: "La foto verrà eliminata al riavvio",
+      });
+    },
+    onError: (error) => {
+      console.error("Move to trash error:", error);
+      toast({
+        title: "Errore",
+        description: "Impossibile spostare la foto nel cestino",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const restoreMutation = useMutation({
+    mutationFn: async (id: string) => {
+      return apiRequest(`/api/photos/${id}/restore`, {
+        method: "PATCH",
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/photos"] });
+      toast({
+        title: "Foto ripristinata",
+        description: "La foto è stata ripristinata dalla cestino",
+      });
+    },
+    onError: (error) => {
+      console.error("Restore error:", error);
+      toast({
+        title: "Errore",
+        description: "Impossibile ripristinare la foto",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const emptyTrashMutation = useMutation({
+    mutationFn: async () => {
+      return apiRequest("/api/photos/empty-trash", {
+        method: "POST",
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/photos"] });
+      toast({
+        title: "Cestino svuotato",
+        description: "Tutte le foto nel cestino sono state eliminate",
+      });
+    },
+    onError: (error) => {
+      console.error("Empty trash error:", error);
+      toast({
+        title: "Errore",
+        description: "Impossibile svuotare il cestino",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleUpload = useCallback(
     (files: FileList) => {
       uploadMutation.mutate(files);
@@ -88,6 +158,24 @@ function PhotoFrameApp() {
     },
     [deleteMutation]
   );
+
+  const handleMoveToTrash = useCallback(
+    (id: string) => {
+      moveToTrashMutation.mutate(id);
+    },
+    [moveToTrashMutation]
+  );
+
+  const handleRestore = useCallback(
+    (id: string) => {
+      restoreMutation.mutate(id);
+    },
+    [restoreMutation]
+  );
+
+  const handleEmptyTrash = useCallback(() => {
+    emptyTrashMutation.mutate();
+  }, [emptyTrashMutation]);
 
   const handleStartSlideshow = useCallback(() => {
     setIsSlideshow(true);
@@ -109,15 +197,23 @@ function PhotoFrameApp() {
     url: photo.filepath.startsWith('/') ? '.' + photo.filepath : photo.filepath,
   }));
 
+  // Separate active and trashed photos
+  const activePhotos = photosWithUrls.filter(p => !p.inTrash);
+  const trashedPhotos = photosWithUrls.filter(p => p.inTrash);
+
   return (
     <>
       {isSlideshow ? (
-        <SlideshowPage photos={photosWithUrls} onExit={handleExitSlideshow} />
+        <SlideshowPage photos={activePhotos} onExit={handleExitSlideshow} />
       ) : (
         <ManagementPage
-          photos={photosWithUrls}
+          photos={activePhotos}
+          trashedPhotos={trashedPhotos}
           onUpload={handleUpload}
           onDelete={handleDelete}
+          onMoveToTrash={handleMoveToTrash}
+          onRestore={handleRestore}
+          onEmptyTrash={handleEmptyTrash}
           onStartSlideshow={handleStartSlideshow}
         />
       )}
