@@ -19,6 +19,16 @@ export APP_ROOT=/app
 
 cd /app
 
+# Debug: verifica file esistenti
+bashio::log.info "=== DEBUG INFO ==="
+bashio::log.info "Contenuto /app:"
+ls -la /app | head -10
+bashio::log.info "Contenuto /app/dist:"
+ls -la /app/dist 2>/dev/null || bashio::log.warning "/app/dist NON ESISTE"
+bashio::log.info "Contenuto /app/dist/public:"
+ls -la /app/dist/public 2>/dev/null || bashio::log.warning "/app/dist/public NON ESISTE"
+bashio::log.info "==================="
+
 # Avvia l'applicazione
 bashio::log.info "PhotoFrame avviato su porta 5000"
 exec npm start
