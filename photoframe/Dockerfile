@@ -11,7 +11,7 @@ RUN npm install --production --omit=dev
 
 RUN mkdir -p /data/uploads /app/certs
 
-COPY photoframe/run.sh /
+COPY run.sh /
 RUN chmod a+x /run.sh
 
 EXPOSE 5000 5443
