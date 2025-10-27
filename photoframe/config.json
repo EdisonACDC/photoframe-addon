@@ -13,8 +13,8 @@
     "5443/tcp": 5443
   },
   "ports_description": {
-    "5000/tcp": "Interfaccia web HTTP",
-    "5443/tcp": "Interfaccia web HTTPS"
+    "5000/tcp": "Interfaccia web PhotoFrame (HTTP)",
+    "5443/tcp": "Interfaccia web PhotoFrame (HTTPS)"
   },
   "webui": "http://[HOST]:[PORT:5000]",
   "ingress": true,
