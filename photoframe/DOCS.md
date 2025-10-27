@@ -100,11 +100,83 @@ L'add-on include automaticamente la **PhotoFrame Screensaver Card** per visualiz
 
 ### 📥 Installazione Card
 
-#### 1️⃣ Aggiungi la Risorsa in Home Assistant
+#### 🌐 Metodo 1: Ingress (RACCOMANDATO - Funziona in Locale e Remoto)
 
-**Metodo A - File Editor (Raccomandato):**
+Questo metodo funziona sia in **rete locale** che **da remoto** tramite Nabu Casa Cloud!
 
-Modifica il file `configuration.yaml`:
+1. **Apri la pagina di installazione dell'addon:**
+   
+   Vai su **Impostazioni** → **Add-on** → **PhotoFrame** → **Apri Interfaccia Web**
+   
+   Poi clicca su questo link: **/card-install**
+
+2. **Copia l'URL Ingress** mostrato nella pagina (viene rilevato automaticamente)
+
+3. **Aggiungi la risorsa** in `configuration.yaml`:
+
+```yaml
+# File: configuration.yaml
+
+lovelace:
+  mode: storage
+  resources:
+    - url: /api/hassio_ingress/<ADDON_SLUG>/photoframe-screensaver-card.js
+      type: module
+```
+
+**Sostituisci `<ADDON_SLUG>`** con lo slug del tuo addon (es: `c193b561_photoframe-beta`).  
+Lo trovi nell'URL quando apri il panel dell'addon.
+
+4. **Riavvia** Home Assistant
+5. **Svuota cache** browser (CTRL + SHIFT + DEL)
+6. **Aggiungi la card** alla dashboard
+
+✅ **Vantaggi:**
+- Funziona sia locale che remoto (Nabu Casa Cloud)
+- Nessuna configurazione IP
+- Aggiornamenti automatici
+
+---
+
+#### 💾 Metodo 2: Download Locale (Per Installazione Manuale)
+
+Se preferisci avere la card nella cartella `/config/www/` di Home Assistant:
+
+1. **Scarica la card:**
+   
+   Apri: `http://<HOMEASSISTANT_IP>:5000/card-install`
+   
+   Clicca su **"Scarica photoframe-screensaver-card.js"**
+
+2. **Copia in Home Assistant:**
+   
+   Metti il file in `/config/www/`
+
+3. **Aggiungi la risorsa:**
+
+```yaml
+# File: configuration.yaml
+
+lovelace:
+  mode: storage
+  resources:
+    - url: /local/photoframe-screensaver-card.js
+      type: module
+```
+
+4. **Riavvia** Home Assistant
+5. **Svuota cache** browser
+6. **Aggiungi la card**
+
+⚠️ **Svantaggi:**
+- Devi aggiornare manualmente ad ogni release
+- Non funziona tramite Ingress
+
+---
+
+#### 📡 Metodo 3: URL Diretto (Solo Rete Locale)
+
+Questo metodo funziona **SOLO in rete locale**, NON da remoto:
 
 ```yaml
 # File: configuration.yaml
@@ -116,97 +188,11 @@ lovelace:
       type: module
 ```
 
-**Sostituisci `<HOMEASSISTANT_IP>`** con l'indirizzo del tuo Home Assistant:
-- Esempio: `192.168.1.100:5000`
-- Oppure: `homeassistant.local:5000`
+**Sostituisci `<HOMEASSISTANT_IP>`** con il tuo indirizzo IP (es: `192.168.1.100` o `homeassistant.local`)
 
-**Metodo B - Interfaccia Grafica:**
-1. Vai su **Impostazioni** → **Dashboard** → **⋮** (menu) → **Risorse**
-2. Clicca **Aggiungi Risorsa**
-3. URL: `http://<HOMEASSISTANT_IP>:5000/photoframe-screensaver-card.js`
-4. Tipo: **JavaScript Module**
-5. Salva
-
-#### 2️⃣ Riavvia Home Assistant
-
-```
-Impostazioni → Sistema → Riavvia
-```
-
-#### 3️⃣ Svuota Cache Browser
-
-```
-CTRL + SHIFT + DEL
-→ Intervallo: Da sempre
-→ Cancella tutto
-```
-
-#### 4️⃣ Aggiungi la Card alla Dashboard
-
-1. Vai alla tua **Dashboard**
-2. Clicca **Modifica Dashboard**
-3. Clicca **Aggiungi Card**
-4. Cerca **"PhotoFrame Screensaver Card"**
-5. Configura usando l'**editor visuale** (niente YAML!)
-
-### ⚙️ Configurazione Card
-
-L'editor visuale permette di configurare:
-
-- **Altezza Card**: 250-2000px (default: 250px compatto)
-- **Timeout Inattività**: 5-300 secondi prima del fullscreen automatico
-- **Effetto Transizione**: 13 effetti disponibili + mix casuale
-- **Adattamento Foto**: 
-  - **Cover** (schermo pieno, zero spazi neri) - Raccomandato
-  - **Contain** (foto intera sempre visibile)
-- **Auto-Fullscreen**: Abilita/disabilita screensaver automatico
-
-### 🎬 Effetti Transizione Disponibili
-
-1. ✨ **Dissolvenza** - Transizione morbida
-2. ◀️ **Scorri Sinistra** - Slide da destra a sinistra
-3. ▶️ **Scorri Destra** - Slide da sinistra a destra
-4. ⬆️ **Scorri Su** - Slide dal basso verso l'alto
-5. ⬇️ **Scorri Giù** - Slide dall'alto verso il basso
-6. 🔍 **Zoom In** - Ingrandimento progressivo
-7. 🔎 **Zoom Out** - Rimpicciolimento progressivo
-8. 📹 **Ken Burns** - Effetto documentario (zoom + pan)
-9. 🔄 **Rotazione** - Rotazione 360°
-10. 🃏 **Flip 3D** - Capovolgimento tridimensionale
-11. 🌀 **Spirale** - Transizione a spirale
-12. 📐 **Angolo** - Transizione dall'angolo
-13. 🎲 **Mix Casuale** - Tutti gli effetti in ordine casuale
-
-### 📐 Dimensioni Card Consigliate
-
-- **250px** - Preview compatta per dashboard (default)
-- **400px** - Card media
-- **600px** - Card grande  
-- **800px+** - Quasi fullscreen
-
-💡 **Tip**: Puoi ridimensionare facilmente la card usando il **Layout Editor** di Home Assistant con drag & drop degli angoli!
-
-### 🎨 Esempio Configurazione YAML (opzionale)
-
-Se preferisci configurare manualmente via YAML:
-
-```yaml
-type: custom:photoframe-screensaver-card
-card_height: 250
-idle_timeout: 60
-transition_effect: mix
-image_fit: cover
-enable_auto_fullscreen: true
-```
-
-### 🔄 Aggiornamenti Card
-
-Quando aggiorni l'add-on PhotoFrame, la card viene aggiornata automaticamente!
-
-**Dopo ogni aggiornamento:**
-1. Svuota la cache del browser (CTRL + SHIFT + DEL)
-2. Ricarica Home Assistant (F5)
-
+⚠️ **Limitazioni:**
+- NON funziona da remoto (Nabu Casa Cloud)
+- Richiede configurazione IP manuale
 ## Integrazione Home Assistant
 
 ### Configurazione REST Commands
