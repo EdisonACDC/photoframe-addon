@@ -21,7 +21,6 @@ RUN npm install --verbose
 COPY client ./client
 COPY server ./server
 COPY shared ./shared
-COPY public ./public
 COPY vite.config.ts ./
 COPY tsconfig.json ./
 COPY tailwind.config.ts ./
