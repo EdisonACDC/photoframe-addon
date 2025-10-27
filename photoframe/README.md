@@ -7,7 +7,8 @@ Trasforma il tuo tablet in una elegante cornice digitale con slideshow automatic
 ## 🎯 Caratteristiche
 
 - **Slideshow a schermo intero** con transizioni fluide
-- 🎴 **Custom Lovelace Card Integrata** - Visualizza lo slideshow direttamente nella dashboard
+- 🎴 **Custom Lovelace Card Integrata** - Visualizza lo slideshow nella dashboard (funziona anche da remoto!)
+- 🌐 **Supporto Ingress** - Accesso sicuro sia locale che remoto tramite Nabu Casa Cloud
 - 🎬 **13 Effetti di Transizione** - Dissolvenza, slide, zoom, Ken Burns, 3D flip, spirale e altro
 - **Upload foto** tramite drag & drop o selezione file
 - **Gestione galleria** con griglia thumbnails e eliminazione
@@ -55,9 +56,47 @@ Trasforma il tuo tablet in una elegante cornice digitale con slideshow automatic
 
 L'add-on include automaticamente una **custom Lovelace card** per visualizzare lo slideshow direttamente nella tua dashboard!
 
-#### Installazione Card:
+#### 🌐 Installazione Card (Metodo Ingress - RACCOMANDATO):
 
-1. **Aggiungi la risorsa** in `configuration.yaml`:
+Questo metodo funziona sia in **rete locale** che **da remoto** tramite Nabu Casa Cloud!
+
+1. **Apri la pagina di installazione:**
+   
+   Vai su **Impostazioni** → **Add-on** → **PhotoFrame** → **Apri Interfaccia Web** → `/card-install`
+
+2. **Segui le istruzioni** mostrate nella pagina (l'URL Ingress viene rilevato automaticamente)
+
+3. **Aggiungi la risorsa** in `configuration.yaml`:
+
+```yaml
+# configuration.yaml
+lovelace:
+  mode: storage
+  resources:
+    - url: /api/hassio_ingress/<ADDON_SLUG>/photoframe-screensaver-card.js
+      type: module
+```
+
+Sostituisci `<ADDON_SLUG>` con lo slug del tuo addon (es: `c193b561_photoframe-beta`)
+
+4. **Riavvia Home Assistant**
+
+5. **Svuota cache browser** (CTRL + SHIFT + DEL)
+
+6. **Aggiungi la card** alla dashboard:
+   - Modifica Dashboard
+   - Aggiungi Card
+   - Cerca "PhotoFrame Screensaver Card"
+   - Configura con l'editor visuale
+
+✅ **Vantaggi Ingress:**
+- Funziona sia locale che remoto (Nabu Casa Cloud)
+- Nessuna configurazione IP necessaria
+- Aggiornamenti automatici quando aggiorni l'addon
+
+#### 📡 Metodo Alternativo (Solo Rete Locale):
+
+Se preferisci, puoi anche usare l'URL diretto (funziona SOLO in rete locale):
 
 ```yaml
 # configuration.yaml
@@ -70,15 +109,11 @@ lovelace:
 
 Sostituisci `<HOMEASSISTANT_IP>` con il tuo indirizzo IP (es: `192.168.1.100` o `homeassistant.local`)
 
-2. **Riavvia Home Assistant**
+⚠️ **Nota**: Questo metodo NON funziona da remoto.
 
-3. **Svuota cache browser** (CTRL + SHIFT + DEL)
+---
 
-4. **Aggiungi la card** alla dashboard:
-   - Modifica Dashboard
-   - Aggiungi Card
-   - Cerca "PhotoFrame Screensaver Card"
-   - Configura con l'editor visuale
+Per istruzioni dettagliate e altri metodi di installazione, visita: `/card-install` nell'interfaccia web dell'addon.
 
 #### Caratteristiche Card:
 
@@ -87,6 +122,7 @@ Sostituisci `<HOMEASSISTANT_IP>` con il tuo indirizzo IP (es: `192.168.1.100` o 
 - 📐 **Design responsive** - card compatta (250px) ridimensionabile
 - 🖼️ **Auto-fullscreen** - diventa screensaver dopo inattività
 - 📸 **Adattamento perfetto** - foto sempre a schermo pieno
+- 🌐 **Funziona da remoto** - grazie al supporto Ingress
 
 ### Da Home Assistant (REST Commands)
 
