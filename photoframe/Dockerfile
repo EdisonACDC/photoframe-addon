@@ -3,7 +3,7 @@ FROM $BUILD_FROM
 
 # Installa Node.js e dipendenze
 RUN apk add --no-cache \
-    nodejs-current \
+    nodejs \
     npm \
     bash \
     openssl
@@ -15,7 +15,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Installa dipendenze
-RUN npm install --verbose
+RUN npm install
 
 # Copia il codice
 COPY client ./client
@@ -27,7 +27,7 @@ COPY tailwind.config.ts ./
 COPY postcss.config.js ./
 
 # Fai il build
-RUN npm run build || (cat /root/.npm/_logs/*.log 2>/dev/null && exit 1)
+RUN npm run build
 
 # Crea directory per upload e certificati
 RUN mkdir -p /data/uploads
