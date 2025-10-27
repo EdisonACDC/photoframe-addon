@@ -6,5 +6,6 @@ DOCS.md
 CHANGELOG.md
 *.log
 .DS_Store
+dist
 uploads
 .env
