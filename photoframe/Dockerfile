@@ -1,28 +1,32 @@
 ARG BUILD_FROM
 FROM ${BUILD_FROM}
 
-# Installa solo Node.js
-RUN apk add --no-cache nodejs-current npm bash openssl
+RUN apk add --no-cache \
+    nodejs-current \
+    npm \
+    bash \
+    openssl
 
 WORKDIR /app
 
-# Prima: installa dipendenze
 COPY package*.json ./
-RUN npm ci --production --ignore-scripts || npm install --production --ignore-scripts
+RUN npm install
 
-# Poi: copia tutto il codice
-COPY . .
+COPY client ./client
+COPY server ./server
+COPY shared ./shared
+COPY vite.config.ts ./
+COPY tsconfig.json ./
+COPY tailwind.config.ts ./
+COPY postcss.config.js ./
 
-# Build con fallback
-RUN npm run build || echo "Build fallito, uso fallback"
+RUN npm run build
 
-# Crea directory uploads
 RUN mkdir -p /data/uploads
 
-# Script di avvio
 COPY run.sh /
-RUN chmod +x /run.sh
+RUN chmod a+x /run.sh
 
 EXPOSE 5000 5443
 
-CMD ["/run.sh"]
+CMD [ "/run.sh" ]
