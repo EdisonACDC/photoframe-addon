@@ -1,28 +1,42 @@
-ARG BUILD_FROM=ghcr.io/home-assistant/amd64-base:3.20
+ARG BUILD_FROM
 FROM $BUILD_FROM
 
-# Install dependencies
-RUN apk add --no-cache nodejs npm bash
+# Installa Node.js e dipendenze
+RUN apk add --no-cache \
+    nodejs-current \
+    npm \
+    bash
 
+# Crea directory di lavoro
 WORKDIR /app
 
-# Copy application
-COPY dist ./dist
-COPY package.json ./
-RUN npm install --production --omit=dev
+# Copia package files
+COPY package*.json ./
 
-# Create directories
-RUN mkdir -p /data/uploads /app/certs
+# Installa dipendenze
+RUN npm install --verbose
 
-# Set environment
-ENV NODE_ENV=production
-ENV PORT=5000
-ENV HTTPS_PORT=5443
-ENV UPLOAD_DIR=/data/uploads
-ENV MAX_UPLOAD_FILES=50
-ENV MAX_FILE_SIZE_MB=10
+# Copia il codice
+COPY client ./client
+COPY server ./server
+COPY shared ./shared
+COPY vite.config.ts ./
+COPY tsconfig.json ./
+COPY tailwind.config.ts ./
+COPY postcss.config.js ./
 
-EXPOSE 5000 5443
+# Fai il build
+RUN npm run build || (cat /root/.npm/_logs/*.log 2>/dev/null && exit 1)
 
-# Run Node.js directly (no scripts, no s6)
-CMD ["/bin/sh", "-c", "mkdir -p /data/uploads && chmod 777 /data/uploads && exec node dist/index.js"]
+# Crea directory per upload
+RUN mkdir -p /data/uploads
+
+# Copia script di avvio nella root e rendilo eseguibile
+COPY run.sh /
+RUN chmod a+x /run.sh
+
+# Espone porta
+EXPOSE 5000
+
+# Avvia applicazione
+CMD [ "/run.sh" ]
