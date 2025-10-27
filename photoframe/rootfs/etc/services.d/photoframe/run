@@ -1,0 +1,52 @@
+#!/command/with-contenv bashio
+# ==============================================================================
+# PhotoFrame Add-on - s6 longrun service
+# ==============================================================================
+
+bashio::log.info "Avvio PhotoFrame Add-on..."
+
+# Configuration from options
+MAX_FILES=$(bashio::config 'max_files')
+MAX_SIZE=$(bashio::config 'max_size_mb')
+
+bashio::log.info "Limite upload: ${MAX_FILES} file"
+bashio::log.info "Dimensione massima file: ${MAX_SIZE}MB"
+
+# Ensure uploads directory exists
+bashio::log.info "Verifica directory uploads..."
+if [ ! -d "/data/uploads" ]; then
+    bashio::log.info "Creazione /data/uploads..."
+    mkdir -p /data/uploads
+else
+    bashio::log.info "/data/uploads esiste già"
+fi
+
+chmod 777 /data/uploads
+bashio::log.info "Permessi aggiornati: 777"
+
+# Debug info
+bashio::log.info "=== DEBUG INFO ==="
+bashio::log.info "Contenuto /app:"
+ls -la /app
+bashio::log.info "Contenuto /data:"
+ls -la /data
+bashio::log.info "Permessi /data/uploads:"
+ls -la /data/uploads
+bashio::log.info "UPLOAD_DIR env: ${UPLOAD_DIR}"
+bashio::log.info "==================="
+
+# Navigate to app directory
+cd /app || bashio::exit.nok "Cannot access /app directory"
+
+# Set environment variables
+export NODE_ENV=production
+export PORT=5000
+export HTTPS_PORT=5443
+export UPLOAD_DIR="/data/uploads"
+export MAX_UPLOAD_FILES="${MAX_FILES}"
+export MAX_FILE_SIZE_MB="${MAX_SIZE}"
+
+bashio::log.info "PhotoFrame avviato su porta 5000"
+
+# Execute Node.js server (replaces this process)
+exec node dist/index.js
