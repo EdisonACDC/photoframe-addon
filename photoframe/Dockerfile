@@ -1,25 +1,28 @@
-# PhotoFrame v1.0.42 - Force cache bust
 ARG BUILD_FROM=ghcr.io/home-assistant/amd64-base:3.20
 FROM $BUILD_FROM
 
-# Install Node.js and dependencies
+# Install dependencies
 RUN apk add --no-cache nodejs npm bash
 
-# Set working directory
 WORKDIR /app
 
-# Copy pre-built dist and dependencies
+# Copy application
 COPY dist ./dist
 COPY package.json ./
 RUN npm install --production --omit=dev
 
-# Create required directories
+# Create directories
 RUN mkdir -p /data/uploads /app/certs
 
-# Create s6 longrun service for PhotoFrame
-RUN mkdir -p /etc/services.d/photoframe
-COPY rootfs/etc/services.d/photoframe/run /etc/services.d/photoframe/run
-RUN chmod a+x /etc/services.d/photoframe/run
+# Set environment
+ENV NODE_ENV=production
+ENV PORT=5000
+ENV HTTPS_PORT=5443
+ENV UPLOAD_DIR=/data/uploads
+ENV MAX_UPLOAD_FILES=50
+ENV MAX_FILE_SIZE_MB=10
 
-# Expose ports
 EXPOSE 5000 5443
+
+# Run Node.js directly (no scripts, no s6)
+CMD ["/bin/sh", "-c", "mkdir -p /data/uploads && chmod 777 /data/uploads && exec node dist/index.js"]
