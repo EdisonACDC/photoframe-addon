@@ -2,7 +2,7 @@
   "name": "PhotoFrame PRO - Cornice Digitale",
   "version": "1.1.28",
   "slug": "photoframe-pro",
-  "description": "Trasforma il tuo tablet in una elegante cornice digitale con slideshow automatico (v1.1.28 - Fresh Build)",
+  "description": "Trasforma il tuo tablet in una elegante cornice digitale con slideshow automatico",
   "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
   "startup": "application",
   "boot": "auto",
@@ -30,6 +30,5 @@
     "ssl": "bool",
     "certfile": "str",
     "keyfile": "str"
-  },
-  "image": "ghcr.io/edisonacdc/{arch}-addon-photoframe-pro"
+  }
 }
