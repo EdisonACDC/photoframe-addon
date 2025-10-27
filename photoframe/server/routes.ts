@@ -34,6 +34,11 @@ const upload = multer({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Determine public directory based on environment
+  const publicDir = process.env.NODE_ENV === 'production'
+    ? path.join(process.cwd(), 'dist', 'public')
+    : path.join(process.cwd(), 'client', 'public');
+
   // Serve uploaded photos
   app.use("/uploads", (req, res, next) => {
     res.setHeader("Cache-Control", "public, max-age=31536000");
@@ -43,13 +48,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Serve installation instructions page
   app.get("/card-install", async (req, res) => {
-    const filePath = path.join(process.cwd(), "public", "install.html");
+    const filePath = path.join(publicDir, "install.html");
     res.sendFile(filePath);
   });
 
   // Serve Lovelace card JavaScript DIRECTLY at root path (for easy download)
   app.get("/photoframe-screensaver-card.js", async (req, res) => {
-    const filePath = path.join(process.cwd(), "public", "photoframe-screensaver-card.js");
+    const filePath = path.join(publicDir, "photoframe-screensaver-card.js");
     res.setHeader("Content-Type", "application/javascript; charset=utf-8");
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     res.setHeader("Access-Control-Allow-Origin", "*");
@@ -58,7 +63,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Serve Lovelace card JavaScript with CORS and NO CACHE for Home Assistant
   app.get("/lovelace/photoframe-screensaver-card.js", async (req, res) => {
-    const filePath = path.join(process.cwd(), "public", "photoframe-screensaver-card.js");
+    const filePath = path.join(publicDir, "photoframe-screensaver-card.js");
     // CORS headers - permettono a Home Assistant di caricare la card
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
@@ -75,7 +80,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Download endpoint - Force download instead of display
   app.get("/download/photoframe-screensaver-card.js", async (req, res) => {
-    const filePath = path.join(process.cwd(), "public", "photoframe-screensaver-card.js");
+    const filePath = path.join(publicDir, "photoframe-screensaver-card.js");
     res.setHeader("Content-Type", "application/javascript; charset=utf-8");
     res.setHeader("Content-Disposition", "attachment; filename=photoframe-screensaver-card.js");
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
