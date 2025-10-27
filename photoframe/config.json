@@ -1,6 +1,6 @@
 {
   "name": "PhotoFrame - Cornice Digitale BETA",
-  "version": "1.0.36",
+  "version": "1.0.37",
   "slug": "photoframe-beta",
   "description": "Trasforma il tuo tablet in una cornice digitale elegante con slideshow automatico",
   "url": "https://github.com/EdisonACDC/photoframe-addon",
@@ -19,6 +19,5 @@
     "5443/tcp": "HTTPS (opzionale)"
   },
   "options": {},
-  "schema": {},
-  "image": "ghcr.io/edisonacdchome/{arch}-addon-photoframe-beta"
+  "schema": {}
 }
