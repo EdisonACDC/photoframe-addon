@@ -85,39 +85,163 @@ Controlla lo slideshow da remoto.
 }
 ```
 
+## 🎴 Custom Lovelace Card Integrata
+
+L'add-on include automaticamente la **PhotoFrame Screensaver Card** per visualizzare lo slideshow direttamente nella dashboard di Home Assistant!
+
+### ✨ Caratteristiche della Card
+
+- 🎬 **13 Effetti di Transizione**: Dissolvenza, slide, zoom, Ken Burns, 3D flip, spirale e altro
+- ⚙️ **Editor Visuale Completo**: Configura tutto senza YAML
+- 📐 **Design Responsive**: Card compatta (250px default) ridimensionabile fino a fullscreen
+- 🖼️ **Auto-Fullscreen**: Screensaver automatico dopo periodo di inattività
+- 📱 **Adattamento Perfetto**: Le foto si adattano a qualsiasi dimensione
+- 🎯 **Zero Problemi CORS**: Servita dallo stesso server dell'addon
+
+### 📥 Installazione Card
+
+#### 1️⃣ Aggiungi la Risorsa in Home Assistant
+
+**Metodo A - File Editor (Raccomandato):**
+
+Modifica il file `configuration.yaml`:
+
+```yaml
+# File: configuration.yaml
+
+lovelace:
+  mode: storage
+  resources:
+    - url: http://<HOMEASSISTANT_IP>:5000/photoframe-screensaver-card.js
+      type: module
+```
+
+**Sostituisci `<HOMEASSISTANT_IP>`** con l'indirizzo del tuo Home Assistant:
+- Esempio: `192.168.1.100:5000`
+- Oppure: `homeassistant.local:5000`
+
+**Metodo B - Interfaccia Grafica:**
+1. Vai su **Impostazioni** → **Dashboard** → **⋮** (menu) → **Risorse**
+2. Clicca **Aggiungi Risorsa**
+3. URL: `http://<HOMEASSISTANT_IP>:5000/photoframe-screensaver-card.js`
+4. Tipo: **JavaScript Module**
+5. Salva
+
+#### 2️⃣ Riavvia Home Assistant
+
+```
+Impostazioni → Sistema → Riavvia
+```
+
+#### 3️⃣ Svuota Cache Browser
+
+```
+CTRL + SHIFT + DEL
+→ Intervallo: Da sempre
+→ Cancella tutto
+```
+
+#### 4️⃣ Aggiungi la Card alla Dashboard
+
+1. Vai alla tua **Dashboard**
+2. Clicca **Modifica Dashboard**
+3. Clicca **Aggiungi Card**
+4. Cerca **"PhotoFrame Screensaver Card"**
+5. Configura usando l'**editor visuale** (niente YAML!)
+
+### ⚙️ Configurazione Card
+
+L'editor visuale permette di configurare:
+
+- **Altezza Card**: 250-2000px (default: 250px compatto)
+- **Timeout Inattività**: 5-300 secondi prima del fullscreen automatico
+- **Effetto Transizione**: 13 effetti disponibili + mix casuale
+- **Adattamento Foto**: 
+  - **Cover** (schermo pieno, zero spazi neri) - Raccomandato
+  - **Contain** (foto intera sempre visibile)
+- **Auto-Fullscreen**: Abilita/disabilita screensaver automatico
+
+### 🎬 Effetti Transizione Disponibili
+
+1. ✨ **Dissolvenza** - Transizione morbida
+2. ◀️ **Scorri Sinistra** - Slide da destra a sinistra
+3. ▶️ **Scorri Destra** - Slide da sinistra a destra
+4. ⬆️ **Scorri Su** - Slide dal basso verso l'alto
+5. ⬇️ **Scorri Giù** - Slide dall'alto verso il basso
+6. 🔍 **Zoom In** - Ingrandimento progressivo
+7. 🔎 **Zoom Out** - Rimpicciolimento progressivo
+8. 📹 **Ken Burns** - Effetto documentario (zoom + pan)
+9. 🔄 **Rotazione** - Rotazione 360°
+10. 🃏 **Flip 3D** - Capovolgimento tridimensionale
+11. 🌀 **Spirale** - Transizione a spirale
+12. 📐 **Angolo** - Transizione dall'angolo
+13. 🎲 **Mix Casuale** - Tutti gli effetti in ordine casuale
+
+### 📐 Dimensioni Card Consigliate
+
+- **250px** - Preview compatta per dashboard (default)
+- **400px** - Card media
+- **600px** - Card grande  
+- **800px+** - Quasi fullscreen
+
+💡 **Tip**: Puoi ridimensionare facilmente la card usando il **Layout Editor** di Home Assistant con drag & drop degli angoli!
+
+### 🎨 Esempio Configurazione YAML (opzionale)
+
+Se preferisci configurare manualmente via YAML:
+
+```yaml
+type: custom:photoframe-screensaver-card
+card_height: 250
+idle_timeout: 60
+transition_effect: mix
+image_fit: cover
+enable_auto_fullscreen: true
+```
+
+### 🔄 Aggiornamenti Card
+
+Quando aggiorni l'add-on PhotoFrame, la card viene aggiornata automaticamente!
+
+**Dopo ogni aggiornamento:**
+1. Svuota la cache del browser (CTRL + SHIFT + DEL)
+2. Ricarica Home Assistant (F5)
+
 ## Integrazione Home Assistant
 
-### Configurazione Configuration.yaml
+### Configurazione REST Commands
 
 Aggiungi al tuo `configuration.yaml`:
 
 ```yaml
-# PhotoFrame Controls
+# PhotoFrame REST Commands
 rest_command:
   photoframe_play:
-    url: "http://localhost:5000/api/slideshow/control"
+    url: "http://<HOMEASSISTANT_IP>:5000/api/slideshow/control"
     method: POST
     content_type: "application/json"
     payload: '{"action": "play"}'
   
   photoframe_pause:
-    url: "http://localhost:5000/api/slideshow/control"
+    url: "http://<HOMEASSISTANT_IP>:5000/api/slideshow/control"
     method: POST
     content_type: "application/json"
     payload: '{"action": "pause"}'
   
   photoframe_next:
-    url: "http://localhost:5000/api/slideshow/control"
+    url: "http://<HOMEASSISTANT_IP>:5000/api/slideshow/control"
     method: POST
     content_type: "application/json"
     payload: '{"action": "next"}'
   
   photoframe_previous:
-    url: "http://localhost:5000/api/slideshow/control"
+    url: "http://<HOMEASSISTANT_IP>:5000/api/slideshow/control"
     method: POST
     content_type: "application/json"
     payload: '{"action": "previous"}'
 ```
+
+**Sostituisci `<HOMEASSISTANT_IP>`** con il tuo indirizzo IP (es: `192.168.1.100` o `homeassistant.local`)
 
 ### Script di Automazione
 
@@ -137,16 +261,20 @@ automation:
       - service: script.photoframe_morning_start
 ```
 
-### Card Lovelace
+### Card Lovelace con Controlli
 
 Aggiungi alla tua dashboard:
 
 ```yaml
 type: vertical-stack
 cards:
-  - type: iframe
-    url: http://homeassistant.local:5000
-    aspect_ratio: 16:9
+  - type: custom:photoframe-screensaver-card
+    card_height: 600
+    idle_timeout: 60
+    transition_effect: mix
+    image_fit: cover
+    enable_auto_fullscreen: true
+  
   - type: horizontal-stack
     cards:
       - type: button
@@ -155,39 +283,21 @@ cards:
         tap_action:
           action: call-service
           service: rest_command.photoframe_play
+      
       - type: button
-        name: Pausa
+        name: Pause
         icon: mdi:pause
         tap_action:
           action: call-service
           service: rest_command.photoframe_pause
+      
       - type: button
-        name: Avanti
+        name: Next
         icon: mdi:skip-next
         tap_action:
           action: call-service
           service: rest_command.photoframe_next
 ```
-
-## Storage e Persistenza
-
-### Directory Dati
-
-Le foto caricate sono salvate in:
-```
-/data/uploads/
-```
-
-Questa directory è persistente e sopravvive ai riavvii dell'add-on.
-
-### Backup
-
-Le foto vengono automaticamente incluse nei backup di Home Assistant.
-
-Per backup manuale:
-1. Vai su **Impostazioni** → **Sistema** → **Backup**
-2. Crea un nuovo backup
-3. Le foto in `/data/uploads` saranno incluse
 
 ## Limitazioni
 
@@ -242,3 +352,14 @@ Accedi ai log completi da:
 **Controlli non rispondono**
 - Ricarica la pagina
 - Pulisci cache browser
+
+**Card non appare nella dashboard**
+- Verifica di aver aggiunto la risorsa in `configuration.yaml`
+- Riavvia Home Assistant
+- Svuota cache browser (CTRL + SHIFT + DEL)
+- Controlla che l'URL sia corretto: `http://<HOMEASSISTANT_IP>:5000/photoframe-screensaver-card.js`
+
+**Card mostra errore di caricamento**
+- Verifica che l'addon PhotoFrame sia avviato
+- Controlla i log dell'addon
+- Prova a ricaricare la dashboard (F5)
