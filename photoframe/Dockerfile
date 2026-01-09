@@ -3,34 +3,35 @@ FROM $BUILD_FROM
 
 # Installa Node.js e dipendenze
 RUN apk add --no-cache \
-    nodejs-current \
+    nodejs \
     npm \
     bash
 
 # Crea directory di lavoro
 WORKDIR /app
 
-# Copia package files
-# COPY package*.json ./
-# Installa dipendenze
-# RUN npm install --verbose
-# Copia il codice
-# COPY server ./serverCOPY shared ./shared
-# COPY vite.config.ts ./COPY tsconfig.json ./
-# COPY tailwind.config.ts ./# COPY postcss.config.js ./
+# Copia package.json e installa dipendenze
+COPY package*.json ./
+RUN npm ci --only=production
 
-# Fai il build
-# RUN npm run build || (cat /root/.npm/_logs/*.log 2>/dev/null && exit 1)
-COPY dist /app/dist
-# Crea directory per upload
-RUN mkdir -p /data/uploads
+# Copia il codice dell'applicazione
+COPY client ./client
+COPY server ./server
+COPY shared ./shared
+COPY vite.config.ts ./
+COPY tsconfig.json ./
+COPY tailwind.config.ts ./
+COPY postcss.config.js ./
 
-# Copia script di avvio nella root e rendilo eseguibile
+# Crea directory per upload e build
+RUN mkdir -p /data/uploads /app/dist
+
+# Copia script di avvio
 COPY run.sh /
 RUN chmod a+x /run.sh
 
 # Espone porta
 EXPOSE 5000
 
-# Avvia applicazione
+# Avvia l'applicazione
 CMD [ "/run.sh" ]
