@@ -12,8 +12,9 @@ WORKDIR /app
 
 # Copia package.json e installa dipendenze
 COPY package*.json ./
-RUN npm ci --only=production
-
+RUN npm ci
+RUN npm run build
+RUN npm prune --production
 # Copia il codice dell'applicazione
 COPY client ./client
 COPY server ./server
