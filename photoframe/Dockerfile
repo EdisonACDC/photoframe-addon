@@ -11,23 +11,17 @@ RUN apk add --no-cache \
 WORKDIR /app
 
 # Copia package files
-COPY package*.json ./
-
+# COPY package*.json ./
 # Installa dipendenze
-RUN npm install --verbose
-
+# RUN npm install --verbose
 # Copia il codice
-COPY client ./client
-COPY server ./server
-COPY shared ./shared
-COPY vite.config.ts ./
-COPY tsconfig.json ./
-COPY tailwind.config.ts ./
-COPY postcss.config.js ./
+# COPY server ./serverCOPY shared ./shared
+# COPY vite.config.ts ./COPY tsconfig.json ./
+# COPY tailwind.config.ts ./# COPY postcss.config.js ./
 
 # Fai il build
-RUN npm run build || (cat /root/.npm/_logs/*.log 2>/dev/null && exit 1)
-
+# RUN npm run build || (cat /root/.npm/_logs/*.log 2>/dev/null && exit 1)
+COPY dist /app/dist
 # Crea directory per upload
 RUN mkdir -p /data/uploads
 
